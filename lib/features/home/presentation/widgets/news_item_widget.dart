@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:news/core/colors/app_colors.dart';
 import 'package:news/core/routes/routes.dart';
 import 'package:news/features/home/presentation/cubit/home_cubit.dart';
 
@@ -16,19 +18,34 @@ class NewsItemWidget extends StatelessWidget {
         itemBuilder: (context, index) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children:[
+            children: [
               Align(
                 alignment: Alignment.center,
                 child: InkWell(
                   onTap: () {
-                    Navigator.pushNamed(context, Routes.details, arguments: homeCubit.newsModel?.articles?[index]);
+                    Navigator.pushNamed(
+                      context,
+                      Routes.details,
+                      arguments: homeCubit.newsModel?.articles?[index],
+                    );
                   },
-                  child: Image.network(
-                    homeCubit.newsModel?.articles?[index].urlToImage ?? '',
-                    width: double.infinity,
+                  child: CachedNetworkImage(
+                    imageUrl:
+                        homeCubit.newsModel?.articles?[index].urlToImage ?? '',
                     height: 232.h,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Icon(Icons.image_not_supported, size: 232.sp),
+                    width: double.infinity,
+                    fit: BoxFit.fill,
+                    placeholder: (context, url) => SizedBox(
+                      width: double.infinity,
+                      height: 232.h,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.mainColor,
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) =>
+                        Center(child: Icon(Icons.broken_image, size: 232.sp)),
                   ),
                 ),
               ),
@@ -36,24 +53,22 @@ class NewsItemWidget extends StatelessWidget {
               Text(homeCubit.newsModel?.articles?[index].title ?? ''),
               SizedBox(height: 10.h),
               Row(
-                  children: [
-                    Text(
-                      homeCubit.newsModel?.articles?[index].source?.name ?? '',
-                    ),
-                    Spacer(),
-                    Text(
-                      homeCubit.newsModel?.articles?[index].publishedAt!.substring(0, 10) ?? '',
-                    ),
-                    
-                  ],
-                ),
-              SizedBox(height: 15.h),
-              Divider(
-                thickness: 1,
-                color: Colors.grey,
+                children: [
+                  Text(
+                    homeCubit.newsModel?.articles?[index].source?.name ?? '',
+                  ),
+                  Spacer(),
+                  Text(
+                    homeCubit.newsModel?.articles?[index].publishedAt!
+                            .substring(0, 10) ??
+                        '',
+                  ),
+                ],
               ),
               SizedBox(height: 15.h),
-            ]
+              Divider(thickness: 1, color: Colors.grey),
+              SizedBox(height: 15.h),
+            ],
           );
           // return ListTile(
           //   leading: Image.network(

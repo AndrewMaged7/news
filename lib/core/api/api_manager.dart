@@ -8,8 +8,6 @@ import 'package:news/core/exceptions/hnadler.dart';
 class ApiManager {
   late Dio dio;
   EndPoints endPoints = EndPoints();
-  // AppServices appServices = AppServices();
-
   ApiManager() {
     dio = Dio(
       BaseOptions(
@@ -23,7 +21,6 @@ class ApiManager {
         },
       ),
     );
-
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
@@ -33,29 +30,22 @@ class ApiManager {
           // }
           return handler.next(options);
         },
-
         onError: (error, handler) async {
           final statusCode = error.response?.statusCode;
-
           if (statusCode == 401) {
             try {
               // bool refreshSuccess = await appServices.refreshToken();
-
               // if (!refreshSuccess) {
               //   return handler.next(error);
               // }
-
               // final auth = HiveCacheHelper.getData<AuthModel>('authData');
               final requestOptions = error.requestOptions;
-
               // requestOptions.headers['Authorization'] =
               //     'Bearer ${auth?.token}';
-
               if (requestOptions.data is FormData) {
                 final filePath = requestOptions.extra['filePath'] as String?;
                 final fileKey =
                     requestOptions.extra['fileKey'] as String? ?? 'file';
-
                 if (filePath != null) {
                   requestOptions.data = FormData.fromMap({
                     fileKey: MultipartFile.fromFileSync(
@@ -65,7 +55,6 @@ class ApiManager {
                   });
                 }
               }
-
               final response = await dio.fetch(requestOptions);
               return handler.resolve(response);
             } catch (e) {

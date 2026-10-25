@@ -22,17 +22,6 @@ class HomeCubit extends Cubit<HomeState> {
   int tabIndex = 0;
   String category = '';
 
-  // Future<void> getSources() async {
-  //   emit(GetSourcesLoading());
-  //   final result = await getSourcesUseCase.call();
-  //   result.fold((failure) {
-  //     emit(GetSourcesError(failure.message));
-  //   }, (SourcesModel sourcesModel) {
-  //     this.sourcesModel = sourcesModel;
-  //     emit(GetSourcesSuccess());
-  //   });
-  // }
-
   
 Future<void> getSources(String category) async {
   final result = await getSourcesUseCase.call(category);

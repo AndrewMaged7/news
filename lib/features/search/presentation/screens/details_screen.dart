@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:news/core/DI/injectable.dart';
+import 'package:news/core/colors/app_colors.dart';
 import 'package:news/features/search/data/models/search_model.dart';
 import 'package:news/features/home/data/models/news_model.dart';
 import 'package:news/features/search/presentation/cubit/search_cubit.dart';
@@ -19,15 +21,33 @@ class DetailsScreen extends StatelessWidget {
         children: [
           DetailsAppBar(),
           SizedBox(height: 20),
-          Image.network(
-            (argument is Articles) ? argument.urlToImage ?? "" : (argument is SearchArticles) ? argument.urlToImage ?? "" : "",
-            width: double.infinity,
-            height: 232.h,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Icon(Icons.image_not_supported, size: 100.sp, color: Colors.grey);
-            },
-          ),
+          CachedNetworkImage(
+                    imageUrl:
+                        (argument is Articles) ? argument.urlToImage ?? '' : (argument is SearchArticles) ? argument.urlToImage ?? '' : '',
+                    height: 232.h,
+                    width: double.infinity,
+                    fit: BoxFit.fill,
+                    placeholder: (context, url) => SizedBox(
+                      width: double.infinity,
+                      height: 232.h,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.mainColor,
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) =>
+                        Center(child: Icon(Icons.broken_image, size: 232.sp)),
+                  ),
+          // Image.network(
+          //   (argument is Articles) ? argument.urlToImage ?? "" : (argument is SearchArticles) ? argument.urlToImage ?? "" : "",
+          //   width: double.infinity,
+          //   height: 232.h,
+          //   fit: BoxFit.cover,
+          //   errorBuilder: (context, error, stackTrace) {
+          //     return Icon(Icons.image_not_supported, size: 100.sp, color: Colors.grey);
+          //   },
+          // ),
           SizedBox(height: 15.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
